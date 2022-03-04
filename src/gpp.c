@@ -1594,6 +1594,15 @@ int SplicePossibleUser(int *idstart, int *idend, int *sh_end, int *lg_end,
         *id = findIdent(C->buf + *idstart, *idend - *idstart);
         if (*id < 0)
             match = 0;
+        else if (macros[*id].nnamedargs == -2 && !match) { /* defined has been called without parentesis */
+            *argb = *idend;
+            while(isDelim(getChar(++(*argb))));
+            if ((*argb) && !getChar(*argb))
+                return 0;
+            *lg_end = *arge = identifierEnd(*argb);
+            *argc = 1;
+            return 1;
+        }
     }
     *lg_end = -1;
 
